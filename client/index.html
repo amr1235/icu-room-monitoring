@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    </style>
+    <title>Document</title>
+    <style>
+        #rows {
+            margin-top: 10%;
+        }
+
+        @media screen and (max-width:600px) {
+            #rows {
+                margin-top: 40%;
+            }
+
+            .marginTop {
+                margin-top: 2%;
+            }
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .form {
+            border: 3px solid #f1f1f1;
+        }
+
+        input[type=text],
+        input[type=password] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #04AA6D;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .container {
+            padding: 16px;
+        }
+
+        span.psw {
+            float: right;
+            padding-top: 16px;
+        }
+
+        /* Change styles for span and cancel button on extra small screens */
+        @media screen and (max-width: 300px) {
+            span.psw {
+                display: block;
+                float: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form" id="login_form">
+        <div class="container" style="display: none;" style="margin-top: 50%;">
+            <label for="uname"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" id="uname" required>
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" id="password" required>
+            <button type="submit" id="login_button" onclick="login(this)">Login</button>
+        </div>
+    </div>
+    <!--end log form -->
+    <div class="container" style="display: none;" dir="rtl">
+        <div id="rows">
+            <div class="row row-cols-2">
+                <div class="col-md-6 col-12">
+                    <canvas id="tempChart"></canvas>
+                </div>
+                <div class="col-md-6 col-12">
+                    <canvas id="GasChart"></canvas>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-4 d-flex justify-content-rigth">
+                    <button class="btn btn-success mx-1" onclick="toggle(this,'temp')">Stop Temperature</button>
+                </div>
+                <div class="col-md-4 d-flex justify-content-center marginTop">
+                    <button class="btn btn-success mx-1" onclick="toggle(this,'gas')">Stop Gas</button>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-4 d-flex justify-content-center">
+                    <button class="btn btn-danger mx-1" onclick="logOut()">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" id="breadcrumb">
+                <li class="breadcrumb-item"><span onclick="breadClicked('0')" style="cursor: pointer;">Rooms</span></li>
+            </ol>
+        </nav>
+        <div id="Rooms" style="display: none;">
+            <div class="row">
+                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('1')">
+                    <img style="width: 100%;" src="./assets/images/room.png">
+                    <span style="margin-left: 40%;font-size: 18pt;">Room 1</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('2')">
+                    <img style="width: 100%;" src="./assets/images/room.png">
+                    <span style="margin-left: 40%;font-size: 18pt;">Room 2</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('3')">
+                    <img style="width: 100%;" src="./assets/images/room.png">
+                    <span style="margin-left: 40%;font-size: 18pt;">Room 3</span>
+                </div>
+            </div>
+        </div>
+        <div id="Patients" >
+            <div class="row">
+                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('1')">
+                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
+                    <span style="margin-left: 35%;font-size: 18pt;">Patient 1</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('1')">
+                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
+                    <span style="margin-left: 35%;font-size: 18pt;">Patient 1</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('1')">
+                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
+                    <span style="margin-left: 35%;font-size: 18pt;">Patient 1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="assets/js/chartjs/dist/chart.min.js"></script>
+<script src="./main.js"></script>
+<script>
+    swInit();
+</script>
+<script>
+    let tempChart = null;
+    let GasChart = null;
+    let naves = ["Rooms","Room","Patients","Patient"];
+    let current_nav = 0;
+    document.getElementById("login_button").addEventListener("click", function (event) {
+        event.preventDefault();
+        let uname = document.getElementById("uname").value;
+        let password = document.getElementById("password").value;
+        document.getElementById("login_form").style.display = "none";
+        document.getElementById("rooms").style.display = "block";
+        tempChart = createChart("tempChart", [], "temperature Chart");
+        GasChart = createChart("GasChart", [], "gas Chart");
+    });
+    function logOut() {
+        document.getElementById("login_form").style.display = "block";
+        document.getElementById("rooms").style.display = "none";
+    }
+    function breadClicked(seq) {
+        for (let i = current_nav; i > Number(seq); i--) {
+            document.getElementById("breadcrumb").children[i].remove();
+        }
+        let currDiv = document.getElementById(naves[current_nav]);
+        let nextDiv = document.getElementById(naves[Number(seq)]);
+        console.log(currDiv,nextDiv);
+        if(currDiv) {
+            currDiv.style.display = "none";
+        }
+        if(nextDiv) {
+            nextDiv.style.display = "block";
+        }
+        current_nav = Number(seq);
+    }
+    function roomClicked(roomNumber) {
+        current_nav++;
+        roomNumber = Number(roomNumber);
+        document.getElementById("Rooms").style.display = "none";
+        let list = document.getElementById("breadcrumb");
+        let child = document.createElement("li");
+        child.classList.add("breadcrumb-item");
+        let a = document.createElement("span");
+        a.setAttribute("onclick","breadClicked('" + current_nav + "')");
+        a.style.cursor = "pointer";
+        a.innerText = naves[current_nav] + " " + String(roomNumber);
+        child.appendChild(a);
+        list.appendChild(child);
+    }
+    let is_temp_running = true;
+    let is_gas_running = true;
+    const ws = new WebSocket("ws://localhost:3000/client");
+    // const ws = new WebSocket("wss://esp32-ws.herokuapp.com/client")
+    ws.onopen = () => {
+        console.log("[CONNECTED]");
+    }
+    ws.onclose = () => {
+        console.log("[DISCONNECTED]");
+    }
+    ws.onmessage = (msg) => {
+        // let data = 
+        msg = JSON.parse(msg.data);
+        let temp = msg.temp;
+        let gas = msg.gas;
+        console.log(`[RECIEVED]: ${temp} : ${gas}`);
+        if (is_temp_running) updateChart(tempChart, temp, 1);
+        if (is_gas_running) updateChart(GasChart, gas, 1);
+    }
+
+    function toggle(element, sensor) {
+        if (sensor === "temp") {
+            is_temp_running = !is_temp_running;
+            element.innerText = is_temp_running ? "Stop Temperature" : "Start Temperature"
+        } else {
+            is_gas_running = !is_gas_running;
+            element.innerText = is_gas_running ? "Stop gas" : "Start gas";
+        }
+        // console.log(is_temp_running,is_gas_running);
+    }
+    function createChart(chartId, yData, title) {
+        const xAxis = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        const ctx = document.getElementById(chartId).getContext('2d');
+        const data = {
+            labels: xAxis,
+            datasets: [{
+                label: title,
+                data: yData,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }],
+            options: {
+                aspectRatio: 0.5
+            }
+        };
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+        });
+        return myChart;
+    }
+    function updateChart(chart, new_y_data, x_res) {
+        if (chart.data.labels.length === chart.data.datasets[0].data.length) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+            chart.data.labels.push(chart.data.labels[chart.data.labels.length - 1] + x_res);
+        }
+        chart.data.datasets[0].data.push(new_y_data);
+        chart.update();
+    }
+    // function downloadData(type) {
+    //     fetch(`https://esp32-ws.herokuapp.com/getReadings?type=${type}`,{headers : {
+    //         "Access-Control-Allow-Origin" : "*"
+    //     }})
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         let tempHeader = ["reading Number", "temperature", "unit"];
+    //         let gasHeader = ["reading Number", "gas", "unit"];
+    //         let finalData = data.map(obj => [String(obj["readingNumber"]), String(obj["value"]), String(obj["unit"])]);
+    //         if (type === "temperature") {
+    //             finalData.unshift(tempHeader);
+    //         } else {
+    //             finalData.unshift(gasHeader);
+    //         }
+    //         let csvContent = "data:text/csv;charset=utf-8,"
+    //             + finalData.map(e => e.join(",")).join("\n");
+    //         var encodedUri = encodeURI(csvContent);
+    //         window.open(encodedUri);
+    //     });
+    // }
+</script>
+
+</html>
