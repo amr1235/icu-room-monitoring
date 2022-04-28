@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>esp</title>
+</head>
+<body>
+    
+</body>
+<script>
+    const ws = new WebSocket("ws://localhost:3000/sensor")
+    ws.onopen = () => {
+        console.log("[CONNECTED]");
+    }
+    ws.onclose = () => {
+        console.log("[DISCONNECTED]");
+    }
+    setInterval(() => {
+        ws.send(JSON.stringify({
+            gas : Math.random(),
+            temp : Math.random()
+        }));
+    },500);
+</script>
+</html>
