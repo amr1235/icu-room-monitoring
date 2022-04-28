@@ -5,7 +5,6 @@ const cors = require("cors");
 let server = express();
 
 server.use(cors());
-
 server = server.listen(process.env.PORT || 3000, () => console.log(`Listening on ${process.env.PORT || 3000}`));
 const ws = new Server({ server });
 const bus = new EventEmitter();
@@ -14,10 +13,16 @@ const subscribers = [];
 let publisher = null;
 
 bus.on("update", async (data) => {
-    // console.log(JSON.parse(msg));
-    subscribers.forEach((sub) => {
-        sub.send(data, { binary: false });
-    });
+    try {
+        data = JSON.parse(data);
+        console.log(data);
+        if (data.temp && data.hum)
+            subscribers.forEach((sub) => {
+                sub.send(JSON.stringify(data), { binary: false });
+            });
+    } catch (error) {
+        console.log("Failed", error);
+    }
 });
 
 bus.on("command", (cmd) => {
@@ -33,7 +38,6 @@ ws.on("connection", (socket, req) => {
             publisher = socket;
             console.log("[SENSOR]:[CONNECTED]");
             socket.on("message", (msg) => {
-                console.log(msg);
                 bus.emit("update", msg);
             });
             socket.on("close", (msg) => {
@@ -51,3 +55,9 @@ ws.on("connection", (socket, req) => {
                 break;
     }
 });
+
+// let flag = true;
+// setInterval(() => {
+//     bus.emit("command", flag ? "room1" : "room2");
+//     flag = !flag;
+// },3000)

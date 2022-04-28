@@ -135,7 +135,7 @@
                     <canvas id="tempChart"></canvas>
                 </div>
                 <div class="col-md-6 col-12">
-                    <canvas id="GasChart"></canvas>
+                    <canvas id="humChart"></canvas>
                 </div>
             </div>
             <div class="row justify-content-center mt-5">
@@ -143,7 +143,7 @@
                     <button class="btn btn-success mx-1" onclick="toggle(this,'temp')">Stop Temperature</button>
                 </div>
                 <div class="col-md-4 d-flex justify-content-center marginTop">
-                    <button class="btn btn-success mx-1" onclick="toggle(this,'gas')">Stop Gas</button>
+                    <button class="btn btn-success mx-1" onclick="toggle(this,'hum')">Stop hum</button>
                 </div>
             </div>
             <div class="row justify-content-center mt-5">
@@ -160,8 +160,10 @@
     swInit();
 </script>
 <script>
+    const ws = new WebSocket("ws://localhost:3000/client");
+
     let tempChart = null;
-    let GasChart = null;
+    let humChart = null;
     let naves = ["Rooms", "Room", "Patient"];
     let current_nav = 0;
     document.getElementById("login_button").addEventListener("click", function (event) {
@@ -207,6 +209,7 @@
         child.appendChild(a);
         list.appendChild(child);
         document.getElementById("Room").style.display = "block";
+        ws.send(`room${roomNumber}`)
     }
     function patientClicked(patientNumber) {
         current_nav++;
@@ -223,12 +226,10 @@
         list.appendChild(child);
         document.getElementById("Patient").style.display = "block";
         tempChart = createChart("tempChart", [], "temperature Chart");
-        GasChart = createChart("GasChart", [], "gas Chart");
+        humChart = createChart("humChart", [], "hum Chart");
     }
     let is_temp_running = true;
-    let is_gas_running = true;
-    const ws = new WebSocket("ws://localhost:3000/client");
-    // const ws = new WebSocket("wss://esp32-ws.herokuapp.com/client")
+    let is_hum_running = true;
     ws.onopen = () => {
         console.log("[CONNECTED]");
     }
@@ -236,13 +237,15 @@
         console.log("[DISCONNECTED]");
     }
     ws.onmessage = (msg) => {
-        // let data = 
-        msg = JSON.parse(msg.data);
-        let temp = msg.temp;
-        let gas = msg.gas;
-        console.log(`[RECIEVED]: ${temp} : ${gas}`);
-        if (is_temp_running) updateChart(tempChart, temp, 1);
-        if (is_gas_running) updateChart(GasChart, gas, 1);
+        if(msg){
+
+            msg = JSON.parse(msg.data);
+            let temp = msg.temp;
+            let hum = msg.hum;
+            console.log(`[RECIEVED]: ${temp} : ${hum}`);
+            if (is_temp_running && temp) updateChart(tempChart, temp, 1);
+            if (is_hum_running && hum) updateChart(humChart, hum, 1);
+        }        
     }
 
     function toggle(element, sensor) {
@@ -250,10 +253,10 @@
             is_temp_running = !is_temp_running;
             element.innerText = is_temp_running ? "Stop Temperature" : "Start Temperature"
         } else {
-            is_gas_running = !is_gas_running;
-            element.innerText = is_gas_running ? "Stop gas" : "Start gas";
+            is_hum_running = !is_hum_running;
+            element.innerText = is_hum_running ? "Stop hum" : "Start hum";
         }
-        // console.log(is_temp_running,is_gas_running);
+        // console.log(is_temp_running,is_hum_running);
     }
     function createChart(chartId, yData, title) {
         const xAxis = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -293,12 +296,12 @@
     //     .then(response => response.json())
     //     .then(data => {
     //         let tempHeader = ["reading Number", "temperature", "unit"];
-    //         let gasHeader = ["reading Number", "gas", "unit"];
+    //         let humHeader = ["reading Number", "hum", "unit"];
     //         let finalData = data.map(obj => [String(obj["readingNumber"]), String(obj["value"]), String(obj["unit"])]);
     //         if (type === "temperature") {
     //             finalData.unshift(tempHeader);
     //         } else {
-    //             finalData.unshift(gasHeader);
+    //             finalData.unshift(humHeader);
     //         }
     //         let csvContent = "data:text/csv;charset=utf-8,"
     //             + finalData.map(e => e.join(",")).join("\n");
