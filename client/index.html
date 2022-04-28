@@ -10,19 +10,15 @@
     </style>
     <title>Document</title>
     <style>
-        #rows {
+        /* #rows {
             margin-top: 10%;
-        }
+        } */
 
-        @media screen and (max-width:600px) {
-            #rows {
-                margin-top: 40%;
+        /* @media screen and (max-width:1200x) {
+            #login_form {
+                margin-top: 20%;
             }
-
-            .marginTop {
-                margin-top: 2%;
-            }
-        }
+        } */
 
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -56,38 +52,84 @@
             opacity: 0.8;
         }
 
-        .container {
-            padding: 16px;
-        }
 
         span.psw {
             float: right;
             padding-top: 16px;
         }
 
+        .log_form {
+            padding: 16px;
+        }
+
+        #login_form {
+            margin-top: 20%;
+        }
+
         /* Change styles for span and cancel button on extra small screens */
-        @media screen and (max-width: 300px) {
-            span.psw {
-                display: block;
-                float: none;
+        @media screen and (max-width: 400px) {
+            #login_form {
+                margin-top: 60%;
             }
+        }
+        @media screen and (min-width:401px){
+            #login_form {
+                margin-top: 13%;
+            }       
         }
     </style>
 </head>
 
 <body>
-    <div class="form" id="login_form">
-        <div class="container" style="display: none;" style="margin-top: 50%;">
+    <div class="form" id="login_form" >
+        <div class="log_form">
             <label for="uname"><b>Username</b></label>
             <input type="text" placeholder="Enter Username" name="uname" id="uname" required>
             <label for="psw"><b>Password</b></label>
             <input type="password" placeholder="Enter Password" name="psw" id="password" required>
-            <button type="submit" id="login_button" onclick="login(this)">Login</button>
+            <button type="submit" id="login_button">Login</button>
         </div>
     </div>
     <!--end log form -->
-    <div class="container" style="display: none;" dir="rtl">
-        <div id="rows">
+    <div class="container" style="display: none;" id="root">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" id="breadcrumb">
+                <li class="breadcrumb-item"><span onclick="breadClicked('0')" style="cursor: pointer;">Rooms</span></li>
+            </ol>
+        </nav>
+        <div id="Rooms">
+            <div class="row">
+                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('1')">
+                    <img style="width: 100%;" src="./assets/images/room.png">
+                    <span style="margin-left: 40%;font-size: 18pt;">Room 1</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('2')">
+                    <img style="width: 100%;" src="./assets/images/room.png">
+                    <span style="margin-left: 40%;font-size: 18pt;">Room 2</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('3')">
+                    <img style="width: 100%;" src="./assets/images/room.png">
+                    <span style="margin-left: 40%;font-size: 18pt;">Room 3</span>
+                </div>
+            </div>
+        </div>
+        <div id="Room" style="display: none;">
+            <div class="row">
+                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('1')">
+                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
+                    <span style="margin-left: 35%;font-size: 18pt;">Patient 1</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('2')">
+                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
+                    <span style="margin-left: 35%;font-size: 18pt;">Patient 2</span>
+                </div>
+                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('3')">
+                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
+                    <span style="margin-left: 35%;font-size: 18pt;">Patient 3</span>
+                </div>
+            </div>
+        </div>
+        <div id="Patient">
             <div class="row row-cols-2">
                 <div class="col-md-6 col-12">
                     <canvas id="tempChart"></canvas>
@@ -111,45 +153,6 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb" id="breadcrumb">
-                <li class="breadcrumb-item"><span onclick="breadClicked('0')" style="cursor: pointer;">Rooms</span></li>
-            </ol>
-        </nav>
-        <div id="Rooms" style="display: none;">
-            <div class="row">
-                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('1')">
-                    <img style="width: 100%;" src="./assets/images/room.png">
-                    <span style="margin-left: 40%;font-size: 18pt;">Room 1</span>
-                </div>
-                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('2')">
-                    <img style="width: 100%;" src="./assets/images/room.png">
-                    <span style="margin-left: 40%;font-size: 18pt;">Room 2</span>
-                </div>
-                <div class="col-sm" style="cursor: pointer;" onclick="roomClicked('3')">
-                    <img style="width: 100%;" src="./assets/images/room.png">
-                    <span style="margin-left: 40%;font-size: 18pt;">Room 3</span>
-                </div>
-            </div>
-        </div>
-        <div id="Patients" >
-            <div class="row">
-                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('1')">
-                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
-                    <span style="margin-left: 35%;font-size: 18pt;">Patient 1</span>
-                </div>
-                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('1')">
-                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
-                    <span style="margin-left: 35%;font-size: 18pt;">Patient 1</span>
-                </div>
-                <div class="col-sm" style="cursor: pointer;margin-top: 5%;" onclick="patientClicked('1')">
-                    <img style="width: 100%;margin-bottom: 10%;" src="./assets/images/patient.png">
-                    <span style="margin-left: 35%;font-size: 18pt;">Patient 1</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 <script src="assets/js/chartjs/dist/chart.min.js"></script>
 <script src="./main.js"></script>
@@ -159,32 +162,33 @@
 <script>
     let tempChart = null;
     let GasChart = null;
-    let naves = ["Rooms","Room","Patients","Patient"];
+    let naves = ["Rooms", "Room", "Patient"];
     let current_nav = 0;
     document.getElementById("login_button").addEventListener("click", function (event) {
         event.preventDefault();
         let uname = document.getElementById("uname").value;
         let password = document.getElementById("password").value;
         document.getElementById("login_form").style.display = "none";
-        document.getElementById("rooms").style.display = "block";
-        tempChart = createChart("tempChart", [], "temperature Chart");
-        GasChart = createChart("GasChart", [], "gas Chart");
+        document.getElementById("Room").style.display = "none";
+        document.getElementById("Patient").style.display = "none";
+        document.getElementById("root").style.display = "block";
     });
     function logOut() {
         document.getElementById("login_form").style.display = "block";
-        document.getElementById("rooms").style.display = "none";
+        document.getElementById("root").style.display = "none";
     }
     function breadClicked(seq) {
+        console.log(seq, current_nav);
         for (let i = current_nav; i > Number(seq); i--) {
             document.getElementById("breadcrumb").children[i].remove();
         }
         let currDiv = document.getElementById(naves[current_nav]);
         let nextDiv = document.getElementById(naves[Number(seq)]);
-        console.log(currDiv,nextDiv);
-        if(currDiv) {
+        console.log(currDiv, nextDiv);
+        if (currDiv) {
             currDiv.style.display = "none";
         }
-        if(nextDiv) {
+        if (nextDiv) {
             nextDiv.style.display = "block";
         }
         current_nav = Number(seq);
@@ -197,11 +201,29 @@
         let child = document.createElement("li");
         child.classList.add("breadcrumb-item");
         let a = document.createElement("span");
-        a.setAttribute("onclick","breadClicked('" + current_nav + "')");
+        a.setAttribute("onclick", "breadClicked('" + current_nav + "')");
         a.style.cursor = "pointer";
         a.innerText = naves[current_nav] + " " + String(roomNumber);
         child.appendChild(a);
         list.appendChild(child);
+        document.getElementById("Room").style.display = "block";
+    }
+    function patientClicked(patientNumber) {
+        current_nav++;
+        patientNumber = Number(patientNumber);
+        document.getElementById("Room").style.display = "none";
+        let list = document.getElementById("breadcrumb");
+        let child = document.createElement("li");
+        child.classList.add("breadcrumb-item");
+        let a = document.createElement("span");
+        a.setAttribute("onclick", "breadClicked('" + current_nav + "')");
+        a.style.cursor = "pointer";
+        a.innerText = naves[current_nav] + " " + String(patientNumber);
+        child.appendChild(a);
+        list.appendChild(child);
+        document.getElementById("Patient").style.display = "block";
+        tempChart = createChart("tempChart", [], "temperature Chart");
+        GasChart = createChart("GasChart", [], "gas Chart");
     }
     let is_temp_running = true;
     let is_gas_running = true;
